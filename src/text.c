@@ -584,7 +584,7 @@ print_alternate_output_progress(axel_t *axel, char *progress, int width,
 	}
 
 	progress[width] = '\0';
-	printf("\r[%3jd%%] [%s", min(100, (long)(done * 100. / total + .5)),
+	printf("\r[%3ld%%] [%s", min(100, (long)(done * 100. / total + .5)),
 	       progress);
 }
 
