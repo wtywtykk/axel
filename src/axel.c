@@ -696,10 +696,10 @@ axel_do(axel_t *axel)
 			} else if (axel->delay_time.tv_sec > 0) {
 				axel->delay_time.tv_sec--;
 				axel->delay_time.tv_nsec += 999000000;
+			} else {
+				axel->delay_time.tv_sec = 0;
+				axel->delay_time.tv_nsec = 0;
 			}
-		} else {
-			axel->delay_time.tv_sec = 0;
-			axel->delay_time.tv_nsec = 0;
 		}
 		if (axel_sleep(axel->delay_time) < 0) {
 			axel_message(axel,
