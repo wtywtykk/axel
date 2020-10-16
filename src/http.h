@@ -51,9 +51,9 @@ typedef struct {
 	int proto;		/* FTP through HTTP proxies */
 	int proxy;
 	char proxy_auth[MAX_STRING];
-  off_t firstbyte;
-  off_t lastbyte;
-  int status;
+	off_t firstbyte;
+	off_t lastbyte;
+	int status;
 	tcp_t tcp;
 	char *local_if;
 } http_t;
