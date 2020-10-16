@@ -491,7 +491,7 @@ axel_do(axel_t *axel)
 	struct timeval timeval[1];
 	url_t *url_ptr;
 	struct timespec delay = {.tv_sec = 0, .tv_nsec = 100000000};
-	unsigned int max_speed_ratio;
+	unsigned long long int max_speed_ratio;
 
 	/* Create statefile if necessary */
 	if (axel_gettime() > axel->next_state) {
@@ -673,7 +673,7 @@ axel_do(axel_t *axel)
 
 	/* Calculate current average speed and finish_time */
 	axel->bytes_per_second =
-	    (int)((double)(axel->bytes_done - axel->start_byte) /
+	    (off_t)((double)(axel->bytes_done - axel->start_byte) /
 		  (axel_gettime() - axel->start_time));
 	if (axel->bytes_per_second != 0)
 		axel->finish_time =

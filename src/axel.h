@@ -130,7 +130,7 @@ typedef struct {
 	double start_time;
 	int next_state, finish_time;
 	off_t bytes_done, start_byte, size;
-	int bytes_per_second;
+	long long int bytes_per_second;
 	struct timespec delay_time;
 	int outfd;
 	int ready;
