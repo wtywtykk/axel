@@ -228,7 +228,7 @@ axel_new(conf_t *conf, int count, const search_t *res)
 	axel->size = axel->conn[0].size;
 	if (axel->conf->verbose > 0) {
 		if (axel->size != LLONG_MAX) {
-			axel_message(axel, _("File size: %zu bytes"),
+			axel_message(axel, _("File size: %jd bytes"),
 				     axel->size);
 		} else {
 			axel_message(axel, _("File size: unavailable"));
@@ -337,7 +337,7 @@ axel_open(axel_t *axel)
 		}
 
 		axel_message(axel,
-			     _("State file found: %zu bytes downloaded, %zu to go."),
+			     _("State file found: %jd bytes downloaded, %jd to go."),
 			     axel->bytes_done, axel->size - axel->bytes_done);
 
 		close(fd);
@@ -370,7 +370,7 @@ axel_open(axel_t *axel)
 				     _("Crappy filesystem/OS.. Working around. :-("));
 			lseek(axel->outfd, 0, SEEK_SET);
 			memset(buffer, 0, axel->conf->buffer_size);
-			long long int j = axel->size;
+			off_t j = axel->size;
 			while (j > 0) {
 				ssize_t nwrite;
 
@@ -402,7 +402,7 @@ void
 reactivate_connection(axel_t *axel, int thread)
 {
 	/* TODO Make the minimum also depend on the connection speed */
-	long long int max_remaining = MIN_CHUNK_WORTH - 1;
+	off_t max_remaining = MIN_CHUNK_WORTH - 1;
 	int idx = -1;
 
 	if (axel->conn[thread].enabled ||
@@ -410,8 +410,8 @@ reactivate_connection(axel_t *axel, int thread)
 		return;
 
 	for (int j = 0; j < axel->conf->num_connections; j++) {
-		long long int remaining =
-		    axel->conn[j].lastbyte - axel->conn[j].currentbyte;
+		off_t remaining =
+			axel->conn[j].lastbyte - axel->conn[j].currentbyte;
 		if (remaining > max_remaining) {
 			max_remaining = remaining;
 			idx = j;
@@ -487,7 +487,7 @@ axel_do(axel_t *axel)
 {
 	fd_set fds[1];
 	int hifd, i;
-	long long int remaining, size;
+	off_t remaining, size;
 	struct timeval timeval[1];
 	url_t *url_ptr;
 	struct timespec delay = {.tv_sec = 0, .tv_nsec = 100000000};
@@ -880,12 +880,12 @@ static void
 axel_divide(axel_t *axel)
 {
 	/* Optimize the number of connections in case the file is small */
-	size_t maxconns = max(1u, axel->size / MIN_CHUNK_WORTH);
+	off_t maxconns = max(1u, axel->size / MIN_CHUNK_WORTH);
 	if (maxconns < axel->conf->num_connections)
 		axel->conf->num_connections = maxconns;
 
 	/* Calculate each segment's size */
-	size_t seg_len = axel->size / axel->conf->num_connections;
+	off_t seg_len = axel->size / axel->conf->num_connections;
 
 	if (!seg_len) {
 		printf(_("Too few bytes remaining, forcing a single connection\n"));

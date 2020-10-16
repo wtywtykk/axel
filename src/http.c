@@ -194,10 +194,10 @@ http_get(http_t *conn, char *lurl)
 	http_addheader(conn, "Accept: */*");
 	if (conn->firstbyte >= 0) {
 		if (conn->lastbyte)
-			http_addheader(conn, "Range: bytes=%lld-%lld",
+			http_addheader(conn, "Range: bytes=%jd-%jd",
 				       conn->firstbyte, conn->lastbyte - 1);
 		else
-			http_addheader(conn, "Range: bytes=%lld-",
+			http_addheader(conn, "Range: bytes=%jd-",
 				       conn->firstbyte);
 	}
 }
@@ -317,24 +317,24 @@ http_header(const http_t *conn, const char *header)
 	return NULL;
 }
 
-long long int
+off_t
 http_size(http_t *conn)
 {
 	const char *i;
-	long long int j;
+	off_t j;
 
 	if ((i = http_header(conn, "Content-Length:")) == NULL)
 		return -2;
 
-	sscanf(i, "%lld", &j);
+	sscanf(i, "%jd", &j);
 	return j;
 }
 
-long long int
+off_t
 http_size_from_range(http_t *conn)
 {
 	const char *i;
-	long long int j;
+	off_t j;
 
 	if ((i = http_header(conn, "Content-Range:")) == NULL)
 		return -2;
@@ -343,7 +343,7 @@ http_size_from_range(http_t *conn)
 	if (i == NULL)
 		return -2;
 
-	if (sscanf(i + 1, "%lld", &j) != 1)
+	if (sscanf(i + 1, "%jd", &j) != 1)
 		return -3;
 
 	return j;
